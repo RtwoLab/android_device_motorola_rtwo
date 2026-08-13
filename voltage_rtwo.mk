@@ -1,5 +1,5 @@
 #
-# SPDX-FileCopyrightText: The LineageOS Project
+# SPDX-FileCopyrightText: The VoltageOS Project
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -10,10 +10,10 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 # Inherit from rtwo device
 $(call inherit-product, device/motorola/rtwo/device.mk)
 
-# Inherit some common Lineage stuff.
-$(call inherit-product, vendor/lineage/config/common_full_phone.mk)
+# Inherit some common Voltage stuff.
+$(call inherit-product, vendor/voltage/config/common_full_phone.mk)
 
-PRODUCT_NAME := lineage_rtwo
+PRODUCT_NAME := voltage_rtwo
 PRODUCT_DEVICE := rtwo
 PRODUCT_MANUFACTURER := motorola
 PRODUCT_BRAND := motorola

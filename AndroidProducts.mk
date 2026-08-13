@@ -1,7 +1,7 @@
 #
-# SPDX-FileCopyrightText: The LineageOS Project
+# SPDX-FileCopyrightText: The VoltageOS Project
 # SPDX-License-Identifier: Apache-2.0
 #
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/lineage_rtwo.mk
+    $(LOCAL_DIR)/voltage_rtwo.mk

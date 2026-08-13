@@ -1,0 +1,32 @@
+[
+  {
+    "remote": "RtwoLab",
+    "repository": "kernel_motorola_sm8550",
+    "target_path": "kernel/motorola/sm8550",
+    "branch": "16.2"
+  },
+  {
+    "remote": "RtwoLab",
+    "repository": "kernel_motorola_sm8550-modules",
+    "target_path": "kernel/motorola/sm8550-modules",
+    "branch": "16.2"
+  },
+  {
+    "remote": "RtwoLab",
+    "repository": "kernel_motorola_sm8550-devicetrees",
+    "target_path": "kernel/motorola/sm8550-devicetrees",
+    "branch": "16.2"
+  },
+  {
+    "remote": "RtwoLab",
+    "repository": "vendor_motorola_rtwo",
+    "target_path": "vendor/motorola/rtwo",
+    "branch": "16.2"
+  },
+  {
+    "remote": "RtwoLab",
+    "repository": "hardware_motorola",
+    "target_path": "hardware/motorola",
+    "branch": "16.2"
+  }
+]
