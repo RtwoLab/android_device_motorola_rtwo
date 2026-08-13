@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-from extract_utils.extract import extract_fns_user_type
-from extract_utils.extract_star import extract_star_firmware
 from extract_utils.fixups_blob import (
     blob_fixup,
     blob_fixups_user_type,
@@ -20,8 +18,7 @@ from extract_utils.main import (
 )
 
 namespace_imports = [
-    'device/motorola/sm8550-common',
-    'vendor/motorola/sm8550-common',
+    'device/motorola/rtwo',
     'hardware/qcom-caf/sm8550',
     'hardware/qcom-caf/wlan',
     'hardware/motorola',
@@ -31,25 +28,57 @@ namespace_imports = [
     'vendor/qcom/opensource/display',
 ]
 
+
+def lib_fixup_vendor_suffix(lib: str, partition: str, *args, **kwargs):
+    return f'{lib}_{partition}' if partition == 'vendor' else None
+
+
 lib_fixups: lib_fixups_user_type = {
     **lib_fixups,
+    (
+        'com.qualcomm.qti.dpm.api@1.0',
+        'vendor.qti.diaghal@1.0',
+        'vendor.qti.hardware.dpmservice@1.0',
+        'vendor.qti.hardware.dpmservice@1.1',
+        'vendor.qti.hardware.qccsyshal@1.0',
+        'vendor.qti.hardware.qccsyshal@1.1',
+        'vendor.qti.hardware.qccsyshal@1.2',
+        'vendor.qti.hardware.wifidisplaysession@1.0',
+        'vendor.qti.imsrtpservice@3.0',
+        'vendor.qti.imsrtpservice@3.1',
+    ): lib_fixup_vendor_suffix,
 }
 
 blob_fixups: blob_fixups_user_type = {
-    'vendor/lib64/libgf_hal.so': blob_fixup()
-        .replace_needed('vendor.goodix.hardware.biometrics.fingerprint@2.1_vendor.so', 'vendor.goodix.hardware.biometrics.fingerprint@2.1.so'),
-    'vendor/lib64/nfc_nci.nqx.default.hw.so': blob_fixup()
-    .add_needed('libbase_shim.so'),
-    (
-        'vendor/bin/hw/vendor.qti.camera.provider-service_64',
-        'vendor/lib64/camx.provider-impl.so',
-    ): blob_fixup()
-        .replace_needed('libtinyxml2.so', 'libtinyxml2-v34.so')
+    'system_ext/etc/permissions/moto-telephony.xml': blob_fixup()
+        .regex_replace('/system/', '/system_ext/'),
+    'system_ext/lib64/libwfdnative.so': blob_fixup()
+        .add_needed('libinput_shim.so'),
+    'system_ext/lib64/vendor.qti.hardware.qccsyshal@1.2-halimpl.so': blob_fixup()
+        .replace_needed('libprotobuf-cpp-full.so', 'libprotobuf-cpp-full-21.7.so'),
+    'system_ext/priv-app/ims/ims.apk': blob_fixup()
+        .apktool_patch('ims-patches'),
+    ('vendor/bin/hw/android.hardware.security.keymint-service-qti', 'vendor/lib64/libqtikeymint.so'): blob_fixup()
+        .add_needed('android.hardware.security.rkp-V3-ndk.so'),
+    'vendor/bin/init.kernel.post_boot.sh': blob_fixup()
+        .regex_replace('ro.boot.using_zram_from_fstab', 'ro.vendor.zram.swapon'),
+    'vendor/etc/sensors/hals.conf': blob_fixup()
+        .add_line_if_missing('sensors.moto_ext.so'),
+    'vendor/etc/seccomp_policy/qwesd@2.0.policy': blob_fixup()
+        .add_line_if_missing('pipe2: 1'),
+    'vendor/etc/public.libraries.txt': blob_fixup()
+        .regex_replace('libqti-perfd-client.so\n', ''),
+    'vendor/etc/media_codecs_kalama.xml': blob_fixup()
+        .regex_replace('.*media_codecs_(google_audio|google_c2|google_telephony|google_video|vendor_audio).*\n', ''),
+    ('vendor/bin/hw/motorola.hardware.sensorext-service', 'vendor/lib64/libdpps.so', 'vendor/lib64/libsnapdragoncolor-manager.so'): blob_fixup()
+        .replace_needed('libtinyxml2.so', 'libtinyxml2-v34.so'),
+    'vendor/lib64/libqcodec2_core.so': blob_fixup()
+        .add_needed('libcodec2_shim.so'),
+    'vendor/lib64/sensors.moto.so': blob_fixup()
+        .add_needed('libbase_shim.so'),
+    'vendor/lib64/vendor.libdpmframework.so': blob_fixup()
+        .add_needed('libhidlbase_shim.so'),
 }  # fmt: skip
-
-extract_fns: extract_fns_user_type = {
-    r'(bootloader|radio)\.img': extract_star_firmware,
-}
 
 module = ExtractUtilsModule(
     'rtwo',
@@ -57,13 +86,8 @@ module = ExtractUtilsModule(
     blob_fixups=blob_fixups,
     lib_fixups=lib_fixups,
     namespace_imports=namespace_imports,
-    extract_fns=extract_fns,
-    add_firmware_proprietary_file=True,
-    add_generated_carriersettings=True,
 )
 
 if __name__ == '__main__':
-    utils = ExtractUtils.device_with_common(
-        module, 'sm8550-common', module.vendor
-    )
+    utils = ExtractUtils.device(module)
     utils.run()
