@@ -12,3 +12,6 @@ ro.camera.enableCamera1MaxZsl=1
 
 # Fingerprint
 ro.hardware.fingerprint=goodix
+
+# Debug
+debug.hwui.skia_atrace_enabled=false
