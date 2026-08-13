@@ -525,9 +525,6 @@ PRODUCT_PACKAGES += \
 
 $(call soong_config_set,lineage_powershare,powershare_path,/sys/class/power_supply/wireless/device/tx_mode)
 
-# Soong namespaces
-PRODUCT_SOONG_NAMESPACES += $(LOCAL_PATH)
-
 # VINTF
 ODM_MANIFEST_SKUS += dn dne dnp n np
 ODM_MANIFEST_DN_FILES := \
@@ -542,6 +539,3 @@ ODM_MANIFEST_N_FILES := \
 ODM_MANIFEST_NP_FILES := \
     $(LOCAL_PATH)/vintf/manifest_np.xml \
     device/motorola/rtwo/vintf/manifest_ss.xml
-
-# Inherit from vendor blobs
-$(call inherit-product, vendor/motorola/rtwo/rtwo-vendor.mk)
