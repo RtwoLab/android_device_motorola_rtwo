@@ -20,14 +20,11 @@ on init
     chown system log /proc/driver/mmi_annotate
     chmod 0640 /proc/driver/mmi_annotate
 
-on early-init
     # Need to wait for platform path for UTAGs driver to succeed
     wait /dev/block/platform/soc/${ro.boot.bootdevice}/by-name/hw
-
     # If utags driver is DLKM, script will load it,
     # otherwise it has to be already loaded
     exec_start vendor.oem-hw-sh
-
     # Map oem properties, this must follow
     # execution of vendor.oem-hw-sh to set
     # required properties.
@@ -49,16 +46,12 @@ on early-init
     setprop ro.vendor.boot.nal_id ${ro.boot.nal_id}
     setprop ro.vendor.zygote ${ro.zygote}
     setprop persist.radio.multisim.config ${persist.vendor.radio.multisim.config}
-
     # Make sure ro.boot.product.hardware.sku is set before hwservicemanager startup.
     setprop ro.boot.product.hardware.sku ${ro.vendor.product.hardware.sku.variant}
-
     # Trigger priority stage of MMI init
     trigger mmi-priority
-
     # Log kernel wake-up source
     write /sys/module/msm_show_resume_irq/parameters/debug_mask 1
-
 on fs
     mkdir /mnt/vendor/persist/fps 0770 system system
     exec_start vendor.ident-fps-sh
